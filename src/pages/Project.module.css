@@ -1,0 +1,40 @@
+.project_main,
+.entries {
+    margin-top: 5rem;
+}
+
+.container {
+    width: 95%;
+    margin: 0 auto;
+}
+
+.form div {
+    padding-bottom: 1.5rem;
+}
+
+.form input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.color input {
+    width: 10%;
+}
+
+.label {
+    display: block;
+    color: red;
+    padding-bottom: 0.2rem;
+}
+
+.project select {
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.submit {
+    width: 100%;
+    display: block;
+    padding: 0.5rem;
+}

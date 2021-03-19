@@ -1,0 +1,135 @@
+.timesheet_main {
+    margin-top: 5rem;
+}
+
+.container {
+    width: 95%;
+    margin: 0 auto;
+}
+
+.form input {
+    display: block;
+    width: 100%;
+    padding: 0.5rem;
+}
+
+.form div {
+    padding-bottom: 1.5rem;
+}
+
+.label {
+    display: block;
+    color: red;
+    padding-bottom: 0.2rem;
+}
+
+.time,
+.timer {
+    display: flex;
+}
+
+.time > div {
+    padding-bottom: 0;
+    width: 50%;
+}
+
+.start,
+.play {
+    margin-right: 1rem;
+}
+
+.end,
+.reset {
+    margin-left: 1rem;
+}
+
+.project select {
+    padding: 0.5rem;
+    width: 100%;
+}
+
+.timer > button {
+    display: block;
+    width: 50%;
+    padding: 0.5rem;
+}
+
+.submit {
+    width: 100%;
+    display: block;
+    padding: 0.5rem;
+}
+
+.entries {
+    margin-top: 3rem;
+}
+
+.entry_list {
+    margin: 1rem 0;
+}
+
+.project_notes,
+.project_duration {
+    margin: 0.5rem;
+}
+
+.project_notes {
+    display: flex;
+}
+
+.newProject {
+    font-weight: bold;
+    margin-right: 0.5rem;
+}
+
+.project_duration {
+    display: flex;
+    justify-content: space-between;
+}
+
+.delete {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+@media screen and (min-width: 800px) {
+    .form {
+        display: flex;
+        justify-content: space-between;
+        /* align-items: flex-start; */
+    }
+
+    .form div {
+        padding-bottom: 0;
+    }
+
+    .form input {
+        display: inline-block;
+        width: auto;
+        padding: 0.5rem;
+    }
+
+    .start,
+    .play {
+        margin-right: 0;
+    }
+
+    .end,
+    .reset {
+        margin-left: 0;
+    }
+
+    .timer > button {
+        display: block;
+        width: auto;
+    }
+
+    .submit {
+        width: auto;
+        display: block;
+    }
+
+    /* .form button {
+        width: 10%;
+    } */
+}

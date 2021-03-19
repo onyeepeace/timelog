@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import './TimeSheet.css';
+import timesheetStyles from './TimeSheet.module.css';
 
 const { Deta } = require('deta'); // import Deta
 
@@ -8,23 +8,27 @@ const { Deta } = require('deta'); // import Deta
 const deta = Deta(process.env.REACT_APP_TIMELOG_PROJECT_KEY);
 
 const timelog = deta.Base('entries');
+const projectlog = deta.Base('projects');
 
 function Timesheet() {
     const [newDate, setNewDate] = useState('');
     const [newStartTime, setNewStartTime] = useState('');
     const [newEndTime, setNewEndTime] = useState('');
+    const [project, setProject] = useState('');
     const [work, setWork] = useState('');
 
     const [isReady, setIsReady] = useState(false);
     const [entryList, setEntryList] = useState([{}]);
+    const [entryProjectList, setEntryProjectList] = useState([{}]);
 
     const handleAddEntry = (e) => {
         e.preventDefault();
-        if (!work || !newDate || !newStartTime || !newEndTime) {
+        if (!work || !project || !newDate || !newStartTime || !newEndTime) {
             alert('fields cannot be blank');
         } else {
             const values = {
                 work,
+                project,
                 date: newDate,
                 startTime: newStartTime,
                 endTime: newEndTime,
@@ -41,94 +45,215 @@ function Timesheet() {
         setIsReady(true);
     };
 
-    const deleteToDo = async (tid) => {
+    const getEntryProject = async () => {
+        let respProjectBody = {};
+        const { value: items } = await projectlog.fetch([]).next();
+        respProjectBody = items;
+        setEntryProjectList(respProjectBody);
+    };
+
+    const deleteEntry = async (tid) => {
         const res = await timelog.delete(tid);
         setTimeout(getEntry, 100);
     };
 
     useEffect(() => {
         getEntry();
+        getEntryProject();
     }, []);
 
     return (
         <Router>
-            <main className='timesheet_main'>
-                <div>
-                    <form action='' onSubmit={handleAddEntry}>
+            <main className={timesheetStyles.timesheet_main}>
+                <div className={timesheetStyles.container}>
+                    <form
+                        action=''
+                        onSubmit={handleAddEntry}
+                        className={timesheetStyles.form}
+                    >
                         {/* date */}
+                        <div className={timesheetStyles.date}>
+                            <label className={timesheetStyles.label}>
+                                Date
+                            </label>
+                            <input
+                                type='date'
+                                value={newDate}
+                                onChange={(e) => setNewDate(e.target.value)}
+                            />
+                        </div>
 
-                        <input
-                            type='date'
-                            value={newDate}
-                            onChange={(e) => setNewDate(e.target.value)}
-                        />
+                        <div className={timesheetStyles.time}>
+                            {/* start time */}
+                            <div className={timesheetStyles.start}>
+                                <label className={timesheetStyles.label}>
+                                    Start time
+                                </label>
+                                <input
+                                    type='time'
+                                    name='time-start'
+                                    id='time-start'
+                                    value={newStartTime}
+                                    onChange={(e) =>
+                                        setNewStartTime(e.target.value)
+                                    }
+                                />
+                            </div>
 
-                        {/* start time */}
-                        <input
-                            type='time'
-                            name='time-start'
-                            id='time-start'
-                            value={newStartTime}
-                            onChange={(e) => setNewStartTime(e.target.value)}
-                        />
-
-                        {/* end time */}
-                        <input
-                            type='time'
-                            name='time-end'
-                            id='time-end'
-                            value={newEndTime}
-                            onChange={(e) => setNewEndTime(e.target.value)}
-                        />
+                            {/* end time */}
+                            <div className={timesheetStyles.end}>
+                                <label className={timesheetStyles.label}>
+                                    End time
+                                </label>
+                                <input
+                                    type='time'
+                                    name='time-end'
+                                    id='time-end'
+                                    value={newEndTime}
+                                    onChange={(e) =>
+                                        setNewEndTime(e.target.value)
+                                    }
+                                />
+                            </div>
+                        </div>
 
                         {/* work notes */}
-                        <input
-                            type='text'
-                            name='work'
-                            id='work'
-                            placeholder='what are you working on?'
-                            value={work}
-                            onChange={(e) => setWork(e.target.value)}
-                        />
+                        <div className={timesheetStyles.note}>
+                            <label className={timesheetStyles.label}>
+                                Note
+                            </label>
+                            <input
+                                type='text'
+                                name='work'
+                                id='work'
+                                placeholder='what are you working on?'
+                                value={work}
+                                onChange={(e) => setWork(e.target.value)}
+                            />
+                        </div>
 
                         {/* select/add project */}
-                        <select
-                            name='select_project'
-                            id='select_project'
-                            placeholder='Select project...'
-                        >
-                            <option value='no_project' disabled>
-                                No project
-                            </option>
-                        </select>
+                        <div className={timesheetStyles.project}>
+                            <label className={timesheetStyles.label}>
+                                Project
+                            </label>
+                            <input
+                                name='projectData'
+                                id='projectData'
+                                list='projectDataList'
+                                placeholder='Select project'
+                                value={project}
+                                onChange={(e) => setProject(e.target.value)}
+                            />
+                            <datalist id='projectDataList'>
+                                {entryProjectList.map((entryProject) => (
+                                    <option value={entryProject.project} />
+                                ))}
+                            </datalist>
+                        </div>
 
-                        {/* play timer */}
-                        <button type='button'>play timer...</button>
+                        <div className={timesheetStyles.timer}>
+                            {/* play timer */}
+                            <button
+                                type='button'
+                                className={timesheetStyles.play}
+                            >
+                                play timer...
+                            </button>
 
-                        {/* restart timer */}
-                        <button type='button'>restart the timer</button>
+                            {/* restart timer */}
+                            <button
+                                type='button'
+                                className={timesheetStyles.reset}
+                            >
+                                restart the timer
+                            </button>
+                        </div>
 
                         {/* Add new entry */}
-                        <button type='submit'>Add entry</button>
+                        <button
+                            type='submit'
+                            className={timesheetStyles.submit}
+                        >
+                            Add entry
+                        </button>
                     </form>
 
-                    {!isReady ? (
-                        <p>No entries in this date range...</p>
-                    ) : (
-                        <div className=''>
-                            {entryList.map((item) => (
-                                <li
-                                    key={item.key}
-                                    onClick={() => deleteToDo(item.key)}
-                                >
-                                    <p>{item.date}</p>
-                                    <p>{item.startTime}</p>
-                                    <p>{item.endTime}</p>
-                                    <p>{item.work}</p>
-                                </li>
-                            ))}
-                        </div>
-                    )}
+                    <div className={timesheetStyles.entries}>
+                        {!isReady ? (
+                            <p>No entries in this date range...</p>
+                        ) : (
+                            <div className=''>
+                                {entryList.map((item) => (
+                                    <div
+                                        className={timesheetStyles.entry_list}
+                                        key={item.key}
+                                    >
+                                        {/* <p>{item.date}</p> */}
+                                        {/* start to end time, end time - start time, : button(modal) */}
+                                        <div
+                                            className={
+                                                timesheetStyles.project_notes
+                                            }
+                                        >
+                                            <p
+                                                className={
+                                                    timesheetStyles.newProject
+                                                }
+                                            >
+                                                {item.project}
+                                            </p>
+                                            <p
+                                                className={
+                                                    timesheetStyles.newWork
+                                                }
+                                            >
+                                                {item.work}
+                                            </p>
+                                        </div>
+
+                                        <div
+                                            className={
+                                                timesheetStyles.project_duration
+                                            }
+                                        >
+                                            <div
+                                                className={
+                                                    timesheetStyles.time_frame
+                                                }
+                                            >
+                                                <p>
+                                                    {item.startTime} -{' '}
+                                                    {item.endTime}
+                                                </p>
+                                            </div>
+
+                                            <div
+                                                className={
+                                                    timesheetStyles.time_spent
+                                                }
+                                            >
+                                                <p>
+                                                    {item.startTime} -{' '}
+                                                    {item.endTime}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            className={timesheetStyles.delete}
+                                            onClick={() => {
+                                                deleteEntry(item.key);
+                                                alert('entry deleted');
+                                            }}
+                                        >
+                                            Delete entry
+                                        </button>
+                                        <hr />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </main>
         </Router>

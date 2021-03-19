@@ -25,7 +25,7 @@ const Header = () => {
 
                     <div className='left-nav'>
                         <NavLink to='/' className='name'>
-                            TimeSheet
+                            TimeLog
                         </NavLink>
                     </div>
 
