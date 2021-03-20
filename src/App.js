@@ -18,6 +18,7 @@ function App() {
                     <Route path='/projects' component={Projects} />
                     <Route path='/settings' component={Settings} />
                 </Switch>
+                {/* </Settings> */}
             </div>
         </BrowserRouter>
     );

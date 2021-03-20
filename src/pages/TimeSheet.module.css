@@ -11,6 +11,9 @@
     display: block;
     width: 100%;
     padding: 0.5rem;
+    border: none;
+    border-bottom: 1px solid #d6d3d3;;
+    background-color: transparent;
 }
 
 .form div {
@@ -19,7 +22,8 @@
 
 .label {
     display: block;
-    color: red;
+    font-weight: bold;
+    font-size: 14px;
     padding-bottom: 0.2rem;
 }
 
@@ -48,16 +52,26 @@
     width: 100%;
 }
 
+.all_buttons button {
+    cursor: pointer;
+}
+
 .timer > button {
     display: block;
     width: 50%;
-    padding: 0.5rem;
+    padding: .5rem;
+    border: 1px solid #d6d3d3;
+    border-radius: 4px;
+    text-transform: capitalize;
 }
 
 .submit {
     width: 100%;
     display: block;
-    padding: 0.5rem;
+    padding: .5rem;
+    border: 1px solid #d6d3d3;
+    border-radius: 4px;
+    text-transform: capitalize;
 }
 
 .entries {
@@ -65,7 +79,10 @@
 }
 
 .entry_list {
+    border: 1px solid #d6d3d3;
+    border-radius: 8px;
     margin: 1rem 0;
+    padding: .5rem 0 1rem;
 }
 
 .project_notes,
@@ -75,11 +92,14 @@
 
 .project_notes {
     display: flex;
+    text-transform: capitalize;
 }
 
 .newProject {
     font-weight: bold;
     margin-right: 0.5rem;
+    padding: .2rem .5rem;
+    border-radius: 4px;
 }
 
 .project_duration {
@@ -87,49 +107,96 @@
     justify-content: space-between;
 }
 
-.delete {
+.action_buttons {
+    display: flex;
+}
+
+.delete,
+.edit {
     width: 100%;
     padding: 0.5rem;
+    margin: 0 .5rem;
+    border: 1px solid #d6d3d3;
+    border-radius: 4px;
+}
+
+@media screen and (min-width: 600px) {
+    .container {
+        width: 80%;
+        margin: 0 auto;
+    }
 }
 
 @media screen and (min-width: 800px) {
-    .form {
-        display: flex;
-        justify-content: space-between;
-        /* align-items: flex-start; */
-    }
-
     .form div {
         padding-bottom: 0;
     }
 
-    .form input {
-        display: inline-block;
-        width: auto;
-        padding: 0.5rem;
+    .label {
+        font-size: 18px;
     }
 
-    .start,
+    .all_inputs, .all_buttons {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-gap: 2rem;
+        margin-bottom: 1rem;
+    }
+
+    .form input {
+        display: inline-block;
+        padding: 0.5rem;
+        font-size: 15px;
+    }
+
     .play {
         margin-right: 0;
     }
 
-    .end,
-    .reset {
-        margin-left: 0;
-    }
-
     .timer > button {
+        width: 100%;
         display: block;
-        width: auto;
+        padding: .5rem;
+        font-size: 16px;
     }
-
+    
     .submit {
-        width: auto;
+        padding: .5rem;
         display: block;
+        font-size: 16px;
     }
 
-    /* .form button {
-        width: 10%;
-    } */
+    .entries {
+        margin-top: 5rem;
+    }
+    
+    .entry_list {
+        border: 1px solid #d6d3d3;
+        border-radius: 8px;
+        margin: 3rem 5rem;
+        padding: 1rem;
+    }
+    
+    .project_notes,
+    .project_duration {
+        margin: 1rem;
+        font-size: 18px;
+    }
+    
+    .project_notes {
+        display: flex;
+        text-transform: capitalize;
+    }
+
+    .delete,
+    .edit {
+        width: 100%;
+        padding: 1rem;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 1rem;
+        border: 1px solid #d6d3d3;
+        border-radius: 4px;
+    }
 }

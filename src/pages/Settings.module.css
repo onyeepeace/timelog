@@ -1,0 +1,12 @@
+body {
+    background-color: var(--background);
+    color: var(--text);
+    margin-top: 5rem;
+}
+
+@media screen and (min-width: 600px) {
+    .container {
+        width: 80%;
+        margin: 0 auto;
+    }
+}

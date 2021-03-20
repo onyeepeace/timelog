@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import projectStyles from './Project.module.css';
-import { GithubPicker } from 'react-color';
 
 const { Deta } = require('deta'); // import Deta
 
@@ -16,7 +15,7 @@ const Projects = () => {
 
     const [isReady, setIsReady] = useState(false);
     const [projectList, setProjectList] = useState([{}]);
-
+    
     const handleAddProject = (e) => {
         e.preventDefault();
         if (!newColor || !newProject) {
@@ -51,14 +50,13 @@ const Projects = () => {
     return (
         <main className={projectStyles.project_main}>
             <div className={projectStyles.container}>
-                {/* <GithubPicker /> */}
                 <form
                     action=''
                     onSubmit={handleAddProject}
                     className={projectStyles.form}
                 >
                     {/* color */}
-                    <div className={projectStyles.color}>
+                    <div className={projectStyles.color_div}>
                         <label className={projectStyles.label}>Color</label>
                         <input
                             className={projectStyles.color}
@@ -69,7 +67,7 @@ const Projects = () => {
                     </div>
 
                     {/* project name */}
-                    <div className={projectStyles.project_name}>
+                    <div className={projectStyles.project_name_form}>
                         <label className={projectStyles.label}>
                             Project name
                         </label>
@@ -89,7 +87,7 @@ const Projects = () => {
                             id='select_parent'
                             placeholder='Select parent...'
                         >
-                            <option value='no_parent' disabled>
+                            <option value='no_parent' defaultChecked>
                                 No parent
                             </option>
                             {projectList.map((singleParent) => (
@@ -99,7 +97,7 @@ const Projects = () => {
                                         setNewParent(e.target.value)
                                     }
                                 >
-                                    {projectList.project}
+                                    {singleParent.project}
                                 </option>
                             ))}
                         </select>
@@ -113,47 +111,59 @@ const Projects = () => {
 
                 <div className={projectStyles.entries}>
                     {!isReady ? (
-                        <p>No entries in this date range...</p>
+                        <p>No projects added yet...</p>
                     ) : (
                         <div className=''>
                             {projectList.map((singleProject) => (
                                 <div
-                                    className={projectStyles.entry_list}
+                                    className={projectStyles.project_list}
                                     key={singleProject.key}
                                 >
-                                    <p>{singleProject.color}</p>
-                                    <p>{singleProject.project}</p>
-                                    {/* <p style={{ fontWeight: 'bold' }}>
-                                        {singleProject.project}
-                                    </p> */}
-                                    <select
-                                        name='select_parent'
-                                        id='select_parent'
-                                        placeholder='Select parent...'
-                                    >
-                                        <option value='no_parent' disabled>
-                                            No parent
-                                        </option>
-                                        <option
-                                            value={newParent}
-                                            onChange={(e) =>
-                                                setNewParent(e.target.value)
-                                            }
-                                        >
-                                            {singleProject.project}
-                                        </option>
-                                    </select>
+                                    <div className={projectStyles.project_container}>
+                                        <p className={projectStyles.project_name_heading}>Project name</p>
+                                        <div className={projectStyles.project_content}>
+                                            <div className={projectStyles.color_box} style={{backgroundColor: singleProject.color}}></div>
+                                            <p className={projectStyles.project_name}>{singleProject.project}</p>
+                                        </div>
+                                    </div>
 
-                                    <button
-                                        className={projectStyles.delete}
-                                        onClick={() => {
-                                            deleteProject(singleProject.key);
-                                            alert('project deleted');
-                                        }}
-                                    >
-                                        Delete entry
-                                    </button>
-                                    <hr />
+                                    <div className={projectStyles.parent_container}>
+                                        <p className={projectStyles.parent_name_heading}>Parent name</p>
+                                        <select
+                                            name='select_parent'
+                                            id='select_parent'
+                                            placeholder='Select parent...'
+                                        >
+                                            <option value='no_parent' disabled>
+                                                No parent
+                                            </option>
+                                            <option
+                                                value={newParent}
+                                                onChange={(e) =>
+                                                    setNewParent(e.target.value)
+                                                }
+                                            >
+                                                {singleProject.project}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div className={projectStyles.action_buttons}>
+                                        <button
+                                            className={projectStyles.delete}
+                                            onClick={() => {
+                                                deleteProject(singleProject.key);
+                                                alert('project deleted');
+                                            }}
+                                        >
+                                            Delete project
+                                        </button>
+
+                                        <button
+                                            className={projectStyles.edit}>
+                                            Edit project
+                                        </button>
+                                    </div>
                                 </div>
                             ))}
                         </div>
