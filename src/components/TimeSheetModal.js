@@ -38,8 +38,7 @@ const getEntryProject = async () => {
 };
 
 const getSelectedEntry = async (tid) => {
-    const res = await timelog.get(tid);
-    console.log(res)
+    await timelog.get(tid);
 }
 getSelectedEntry(tid)
 

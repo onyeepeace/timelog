@@ -189,7 +189,7 @@ const Projects = () => {
                                         <button
                                             className={projectStyles.edit}
                                             onClick={() => {
-                                                console.log(editEntry(singleProject.key));
+                                                editEntry(singleProject.key);
                                                 handleOpen()
                                             }}
                                         >

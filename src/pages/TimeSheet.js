@@ -112,7 +112,6 @@ function Timesheet() {
 
     const editEntry = async (tid) => {
         const res = await timelog.get(tid);
-        console.log(res)
         setSingleEntry(res);
     }
 
