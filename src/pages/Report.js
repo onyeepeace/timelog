@@ -24,10 +24,10 @@ const Report = () => {
 
     // fetches the data for the piechart
     const data = entryList.map(entryData => (
-        {title: entryData.project, value: parseInt(entryData.duration), color: "#22594e"}
+        {title: entryData.project, value: parseInt(entryData.duration), color: entryData.color}
     ))
     
-    // filters entries by today
+    // sorts entries by today
     const handleToday = async () => {
         setToday(true)
         let respBody = {}
@@ -45,7 +45,7 @@ const Report = () => {
         someDate.toISOString().slice(0,10);
     }
 
-    // filters entries by this week
+    // sorts entries by this week
     const handleThisWeek = async () => {
         setThisWeek(true)
         let respBody = {}
@@ -73,8 +73,11 @@ const Report = () => {
     return (
         <main className={reportStyles.report_main}>
                 <div className={reportStyles.container}>
-                <button onClick={handleToday}>Today</button>
-                <button onClick={handleThisWeek}>This Week</button>
+                <p>Sort Report</p>
+                <div className={reportStyles.sort}>
+                    <button className={reportStyles.sort_btns} onClick={handleToday}>Today</button>
+                    <button className={reportStyles.sort_btns} onClick={handleThisWeek}>This Week</button>
+                </div>
                 {(today || thisWeek) && (
                     <>
                         {!isReady ? (

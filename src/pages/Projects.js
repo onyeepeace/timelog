@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import projectStyles from './Project.module.css';
-import Example from '../components/Modal';
-import modalStyles from '../components/Modal.module.css';
+import ProjectModal from '../components/ProjectModal';
 
 const { Deta } = require('deta'); // import Deta
 
@@ -52,37 +51,9 @@ const Projects = () => {
         setIsReady(true);
     };
 
-    // function to open the modal
-    const handleOpen = () => {
-        setStatus(true);
-        document.body.style = 'overflow: hidden';
-    };
-
-    // function to close the modal
-    const handleClose = () => {
-        setStatus(false);
-        document.body.style = 'overflow: auto';
-    };
-
-    // footer for the modal
-    const footer = (
-        <>
-            <button className={modalStyles.okBtn} onClick={handleClose}>
-                Save
-            </button>
-            <button className={modalStyles.okBtn} onClick={handleClose}>
-                Close
-            </button>
-        </>
-    );
-
     const deleteProject = async (tid) => {
         await projectlog.delete(tid);
         setTimeout(getProject, 100);
-    };
-
-    const editEntry = async (tid) => {
-        await projectlog.get(tid);
     };
 
     useEffect(() => {
@@ -147,7 +118,7 @@ const Projects = () => {
 
                     {/* Add new project */}
                     <button type='submit' className={projectStyles.submit}>
-                        Add entry
+                        Add project
                     </button>
                 </form>
 
@@ -189,8 +160,7 @@ const Projects = () => {
                                         <button
                                             className={projectStyles.edit}
                                             onClick={() => {
-                                                editEntry(singleProject.key);
-                                                handleOpen()
+                                                setStatus(true)
                                             }}
                                         >
                                             Edit project
@@ -199,62 +169,7 @@ const Projects = () => {
                                     
                                     {/* modal to edit a project */}
                                     {status && (
-                                        <Example closeModal={handleClose} footer={footer}> 
-                                            <div className={modalStyles.submit}>
-                                                <form
-                                                    action=''
-                                                    onSubmit={handleAddProject}
-                                                    className={projectStyles.form}
-                                                >
-                                                    {/* color */}
-                                                    <div className={projectStyles.color_div}>
-                                                        <label className={projectStyles.label}>Color</label>
-                                                        <input
-                                                            className={projectStyles.color}
-                                                            type='color'
-                                                            value={newColor}
-                                                            onChange={(e) => setNewColor(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    {/* project name */}
-                                                    <div className={projectStyles.project_name_form}>
-                                                        <label className={projectStyles.label}>
-                                                            Project name
-                                                        </label>
-                                                        <input
-                                                            type='text'
-                                                            value={newProject}
-                                                            onChange={(e) => setNewProject(e.target.value)}
-                                                        />
-                                                    </div>
-
-                                                    {/* select/add parent */}
-                                                    <div className={projectStyles.project}>
-                                                        <label className={projectStyles.label}>Parent</label>
-
-                                                        <select
-                                                            name='select_parent'
-                                                            id='select_parent'
-                                                            placeholder='Select parent...'
-                                                            value={newParent}
-                                                            onChange={(e) =>
-                                                                setNewParent(e.target.value)
-                                                            }
-                                                        >
-                                                            <option value='no_parent' defaultChecked>
-                                                                No parent
-                                                            </option>
-                                                            {projectList.map((singleParent, index) => (
-                                                                <option key={index}>
-                                                                    {singleParent.project}
-                                                                </option>
-                                                            ))}
-                                                        </select>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </Example>
+                                        <ProjectModal tid={singleProject.key} status={() => setStatus(false)} />
                                     )}
                                 </div>
                             ))}

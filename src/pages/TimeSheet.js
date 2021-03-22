@@ -1,9 +1,7 @@
-/* eslint-disable no-lone-blocks */
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import timesheetStyles from './TimeSheet.module.css';
-import Example from '../components/Modal';
-import modalStyles from '../components/Modal.module.css';
 import TimeSheetModal from '../components/TimeSheetModal';
 
 const { Deta } = require('deta'); // import Deta
@@ -16,30 +14,30 @@ const projectlog = deta.Base('projects');
 
 function Timesheet() {
     // state for the form inputs
-    const [newDate, setNewDate] = useState('');
-    const [newStartTime, setNewStartTime] = useState('');
-    const [newEndTime, setNewEndTime] = useState('');
+    const [date, setDate] = useState('');
+    const [startTime, setStartTime] = useState('');
+    const [endTime, setEndTime] = useState('');
     const [project, setProject] = useState('');
     const [work, setWork] = useState('');
+    const [color, setColor] = useState('');
 
     // state to display the entries added
-    const [isReady, setIsReady] = useState(false);
+    const [isReady,setIsReady] = useState(true);
     const [entryList, setEntryList] = useState([{}]);
     const [entryProjectList, setEntryProjectList] = useState([{}]);
 
     // state to sort the entries added
     const [today, setToday] = useState(false);
     const [thisWeek, setThisWeek] = useState(false);
-    
-    // state to open the modal and edit an entry
-    const [status, setStatus] = useState(false);
-    const [singleEntry, setSingleEntry] = useState({});
 
-    const handleAddEntry = async (e) => {
+    //show modal
+    const [status, setStatus] = useState(false);
+
+    const handleAddEntry = (e) => {
         e.preventDefault();
         let duration
-        let durationStart = newStartTime.split(":")
-        let durationEnd = newEndTime.split(":")
+        let durationStart = startTime.split(":")
+        let durationEnd = endTime.split(":")
         let time1 = new Date(0, 0, 0, durationStart[0], durationStart[1], 0);
         let time2 = new Date(0, 0, 0, durationEnd[0], durationEnd[1], 0);
         var diff = time2.getTime() - time1.getTime();
@@ -50,26 +48,28 @@ function Timesheet() {
         hours = hours + 12;
         duration = (hours < 9 ? "0" : "") + hours + ":" + (minutes < 9 ? "0" : "") + minutes;
         
-        if (!work || !project || !newDate || !newStartTime || !newEndTime) {
+        if (!work || !project || !date || !startTime || !endTime) {
             alert('fields cannot be blank');
         } else {
             const values = {
                 work,
                 project,
-                date: newDate,
-                startTime: newStartTime,
-                endTime: newEndTime,
-                duration: duration
+                date: date,
+                startTime: startTime,
+                endTime: endTime,
+                duration: duration,
+                color: color
             };
+
             // adds entries to the database
             timelog.put(values);
 
             // clears the form fields
-            setNewDate('')
+            setDate('')
             setWork('')
             setProject('')
-            setNewEndTime('')
-            setNewStartTime('')
+            setEndTime('')
+            setStartTime('')
         }
     };
 
@@ -81,7 +81,7 @@ function Timesheet() {
         setEntryProjectList(respProjectBody);
     };
 
-    // filters entries by today
+    // sorts entries by today
     const handleToday = async () => {
         setToday(true)
         let respBody = {}
@@ -89,7 +89,7 @@ function Timesheet() {
         }]).next();
         respBody = items;
         setEntryList(respBody);
-        setIsReady(true);
+        setIsReady(false);
     }
 
     // calculates days for filter
@@ -99,7 +99,7 @@ function Timesheet() {
         someDate.toISOString().slice(0,10);
     }
 
-    // filters entries by this week
+    // sorts entries by this week
     const handleThisWeek = async () => {
         setThisWeek(true)
         let respBody = {}
@@ -107,38 +107,8 @@ function Timesheet() {
         }]).next();
         respBody = items;
         setEntryList(respBody);
-        setIsReady(true);
+        setIsReady(false);
     }
-
-    const editEntry = async (tid) => {
-        const res = await timelog.get(tid);
-        setSingleEntry(res);
-    }
-
-    // function to open the modal
-    const handleOpen = (tid) => {
-        setStatus(true);
-        // editEntry(tid)
-        document.body.style = 'overflow: hidden';
-    };
-
-    // function to close the modal
-    const handleClose = () => {
-        setStatus(false);
-        document.body.style = 'overflow: auto';
-    };
-
-    // footer for the modal
-    const footer = (
-        <>
-            <button className={modalStyles.okBtn} >
-                Save
-            </button>
-            <button className={modalStyles.okBtn} onClick={handleClose}>
-                Close
-            </button>
-        </>
-    );
 
     const deleteEntry = async (tid) => {
         await timelog.delete(tid);
@@ -148,6 +118,15 @@ function Timesheet() {
     useEffect(() => {
         getEntryProject();
     }, []);
+
+    useEffect(() => {
+        entryProjectList.forEach((projectInfo) => {
+            if (projectInfo.project === project) {
+                setColor(projectInfo.color)
+            } 
+            return 
+        })
+    }, [project])
 
     return (
         <Router>
@@ -165,8 +144,8 @@ function Timesheet() {
                                 <label className={timesheetStyles.label}>Date</label>
                                 <input
                                     type='date'
-                                    value={newDate}
-                                    onChange={(e) => setNewDate(e.target.value)}
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
                                 />
                             </div>
 
@@ -178,8 +157,8 @@ function Timesheet() {
                                         type='time'
                                         name='time-start'
                                         id='time-start'
-                                        value={newStartTime}
-                                        onChange={(e) =>setNewStartTime(e.target.value)}
+                                        value={startTime}
+                                        onChange={(e) =>setStartTime(e.target.value)}
                                     />
                                 </div>
 
@@ -190,8 +169,8 @@ function Timesheet() {
                                         type='time'
                                         name='time-end'
                                         id='time-end'
-                                        value={newEndTime}
-                                        onChange={(e) =>setNewEndTime(e.target.value)}
+                                        value={endTime}
+                                        onChange={(e) =>setEndTime(e.target.value)}
                                     />
                                 </div>
                             </div>
@@ -212,19 +191,19 @@ function Timesheet() {
                             {/* select/add project */}
                             <div className={timesheetStyles.project}>
                                 <label className={timesheetStyles.label}>Project</label>
-                                <input
+                                <select
                                     name='projectData'
                                     id='projectData'
-                                    list='projectDataList'
                                     placeholder='Select project'
                                     value={project}
                                     onChange={(e) => setProject(e.target.value)}
-                                />
-                                <datalist id='projectDataList'>
+                                >
                                     {entryProjectList.map((entryProject, index) => (
-                                        <option value={entryProject.project} key={index} />
+                                        <option key={index}>
+                                            {entryProject.project}
+                                        </option>
                                     ))}
-                                </datalist>
+                                </select>
                             </div>
                         </div>
 
@@ -250,19 +229,20 @@ function Timesheet() {
 
                     {/* displays the entries added */}
                     <div className={timesheetStyles.entries}>
-                        <button onClick={handleToday}>Today</button>
-                        <button onClick={handleThisWeek}>This Week</button>
+                        <p>Sort Entries</p>
+                        <div className={timesheetStyles.sort}>
+                            <button className={timesheetStyles.sort_btns} onClick={handleToday}>Today</button>
+                            <button className={timesheetStyles.sort_btns} onClick={handleThisWeek}>This Week</button>
+                        </div>
                         {(today || thisWeek) && (
                             <>
                                 {!isReady ? (
-                                    <p>No entries in this date range...</p>
-                                ) : (
                                     <div className=''>
                                         {entryList.map((item, index) => (
                                             <div className={timesheetStyles.entry_list} key={index}>
                                                 <p>{item.date}</p>
                                                 <div className={timesheetStyles.project_notes}>
-                                                    <p className={timesheetStyles.newProject} style={{backgroundColor: ''}}>
+                                                    <p className={timesheetStyles.newProject} style={{backgroundColor: color}}>
                                                         {item.project}
                                                     </p>
                                                     <p className={timesheetStyles.newWork}>
@@ -298,8 +278,7 @@ function Timesheet() {
                                                     <button
                                                         className={timesheetStyles.edit} 
                                                         onClick={() => {
-                                                            handleOpen(item.key)
-                                                            editEntry(item.key)
+                                                            setStatus(true)
                                                         }}
                                                     >
                                                         Edit entry
@@ -308,14 +287,15 @@ function Timesheet() {
 
                                                 {/* modal to edit entries */}
                                                 {status && (
-                                                    <Example closeModal={handleClose} footer={footer}>
-                                                        <TimeSheetModal tid={item.key} />
-                                                    </Example>
+                                                    <TimeSheetModal tid={item.key} status={() => setStatus(false)} />
                                                 )}
                                             </div>
                                         ))}
                                     </div>
-                                )}
+                                    ) : (
+                                        <p>No entries</p>
+                                    )
+                                }
                             </>
                         )}
                     </div>

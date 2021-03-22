@@ -33,3 +33,18 @@
     top: 0.5rem;
     right: 0.5rem;
 }
+
+.footer_btns {
+    margin: 1rem;
+    display: flex;
+}
+
+.okBtn {
+    width: 10%;
+    display: block;
+    padding: 0.5rem;
+    margin: 0 .5rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 4px;
+}

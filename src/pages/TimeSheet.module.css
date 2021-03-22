@@ -50,6 +50,9 @@
 .project select {
     padding: 0.5rem;
     width: 100%;
+    border: none;
+    border-bottom: 1px solid #d6d3d3;;
+    background-color: transparent;
 }
 
 .all_buttons button {
@@ -65,7 +68,17 @@
     text-transform: capitalize;
 }
 
-.submit {
+.sort {
+    display: flex;
+    width: 80%;
+    margin-top: .5rem;
+}
+
+.sort_btns {
+    margin: 0 .5rem;
+}
+
+.submit, .sort_btns {
     width: 100%;
     display: block;
     padding: .5rem;
@@ -159,6 +172,10 @@
         display: block;
         padding: .5rem;
         font-size: 16px;
+    }
+
+    .sort {
+        width: 30%;
     }
     
     .submit {
