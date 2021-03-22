@@ -11,6 +11,7 @@ View it here [Timelog](https://logtime.netlify.app)
 - Sort through entries and report
 
 **Page views**
+
 **Timesheet page** - Here, you can add a date, start time, end time, a note on what you're working on and a project. Clicking on the add entry button creates a new entry with the data filled in the form. You can sort entries by today to show entries for the day or this week to show entries for the week. You can edit each project and also delete them.
 
 <img width="1064" alt="timesheetpage" src="https://user-images.githubusercontent.com/53520853/112054711-30605500-8b56-11eb-8dc3-4d30e306e817.png">
@@ -26,6 +27,7 @@ The report displays a piechart to visualize the time spent on each project. You 
 
 ### Steps to clone this project to your local machine
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
 **1. Clone repository**
 ```
 # Open your terminal and paste the following:
@@ -44,6 +46,8 @@ $ yarn install
 ```
 # Create a .env file in the root folder of the timelog project. Add the following and save:
 $ REACT_APP_TIMELOG_PROJECT_KEY = 'your copied project key'
+
+# Create a .gitignore file and add the .env file to the .gitignore file so you don't commit the key to github
 
 # Start the app. This will start the app on localhost:3000
 $ yarn start
