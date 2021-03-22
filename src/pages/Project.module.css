@@ -97,13 +97,6 @@ input[type='color']::-webkit-color-swatch {
     text-transform: capitalize;
 }
 
-.project_list select {
-    padding: 0.5rem;
-    width: 100%;
-    border-radius: 4px;
-    background-color: transparent;
-}
-
 .action_buttons {
     margin: 1rem;
     display: flex;
@@ -159,7 +152,7 @@ input[type='color']::-webkit-color-swatch {
     /* display of project */
     .project_list {
         display: grid;
-        grid-template-columns: 20% 40% 40%;
+        grid-template-columns: 30% 30% 40%;
         margin: 3rem 5rem;
         padding: 1rem;
     }
@@ -174,6 +167,10 @@ input[type='color']::-webkit-color-swatch {
         margin-bottom: 1rem;
     }
 
+    .project_content {
+        margin: 0;
+    }
+
     .color_box {
         width: 2rem;
         height: 2rem;
@@ -182,6 +179,10 @@ input[type='color']::-webkit-color-swatch {
     .project_name {
         font-size: 18px;
         margin-left: 1rem;
+    }
+
+    .parent_name {
+        font-size: 18px;
     }
 
     .action_buttons button {

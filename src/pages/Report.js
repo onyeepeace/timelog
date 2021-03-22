@@ -9,34 +9,17 @@ const { Deta } = require('deta'); // import Deta
 const deta = Deta(process.env.REACT_APP_TIMELOG_PROJECT_KEY);
 
 const timelog = deta.Base('entries');
-const projectlog = deta.Base('projects');
 
 const Report = () => {
     const [isReady, setIsReady] = useState(false);
     const [entryList, setEntryList] = useState([{}]);
-    const [entryProjectList, setEntryProjectList] = useState([{}]);
     const [today, setToday] = useState(false);
     const [thisWeek, setThisWeek] = useState(false);
-    
-    const see = entryProjectList.map(color => (color.color))
-    console.log(see)
-        
-    const look = see.map(luks => luks)
-    console.log(look)
+    const [status, setStatus] = useState(false);
 
-    const date = entryList.map(entryData => (
+    const data = entryList.map(entryData => (
         {title: entryData.project, value: parseInt(entryData.duration), color: "#22594e"}
     ))
-    console.log(date)
-
-    // const data = [
-    //     {title: "Data 1", value: 100, color: "#22594e"},
-    //     {title: "Data 2", value: 60, color: "#2f7d6d"},
-    //     {title: "Data 3", value: 30, color: "#3da18d"},
-    //     {title: "Data 4", value: 20, color: "#69c2b0"},
-    //     {title: "Data 5", value: 10, color: "#a1d9ce"},
-    //   ]
-    //   console.log(data)
 
     const getEntry = async () => {
         let respBody = {};
@@ -44,13 +27,6 @@ const Report = () => {
         respBody = items;
         setEntryList(respBody);
         setIsReady(true);
-    };
-
-    const getEntryProject = async () => {
-        let respProjectBody = {};
-        const { value: items } = await projectlog.fetch([]).next();
-        respProjectBody = items;
-        setEntryProjectList(respProjectBody);
     };
 
     const handleToday = async () => {
@@ -80,9 +56,13 @@ const Report = () => {
         setIsReady(true);
     }
 
+    const handleOpen = () => {
+        const isOpen = !status
+        setStatus(isOpen);
+    };
+
     useEffect(() => {
         getEntry();
-        getEntryProject();
     }, []);
 
     const totalDurations = entryList.slice(1)
@@ -105,7 +85,7 @@ const Report = () => {
                             <div>
                                 <div className={reportStyles.chart_container}>
                                     <div className={reportStyles.piechart}>
-                                        <ReactSvgPieChart data={date} expandOnHover/>
+                                        <ReactSvgPieChart data={data} expandOnHover/>
                                     </div>
                                     <div className={reportStyles.chart_projects}>
                                         <ul>
@@ -132,7 +112,8 @@ const Report = () => {
                                     </div>
                                 </div>
                                 
-                                <button className={reportStyles.report_button} >See detailed report</button>
+                                <button className={reportStyles.report_button} onClick={handleOpen}>See detailed report</button>
+                                {status && (
                                 <div className={reportStyles.detailed_report} id="detailed">
                                     <div className={reportStyles.detailed_heading}>
                                         <h4>Date</h4>
@@ -153,6 +134,7 @@ const Report = () => {
                                         </div>
                                     ))}
                                 </div>
+                                )}
                             </div>
                         )}
                     </>

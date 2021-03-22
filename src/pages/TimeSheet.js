@@ -1,9 +1,9 @@
+/* eslint-disable no-lone-blocks */
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import timesheetStyles from './TimeSheet.module.css';
 import Example from '../components/Modal';
 import modalStyles from '../components/Modal.module.css';
-import Timer from '../components/Timer';
 
 const { Deta } = require('deta'); // import Deta
 
@@ -23,6 +23,11 @@ function Timesheet() {
     const [isReady, setIsReady] = useState(false);
     const [entryList, setEntryList] = useState([{}]);
     const [entryProjectList, setEntryProjectList] = useState([{}]);
+
+    const [today, setToday] = useState(false);
+    const [thisWeek, setThisWeek] = useState(false);
+    
+    const [singleEntry, setSingleEntry] = useState({});
 
     const handleAddEntry = async (e) => {
         e.preventDefault();
@@ -66,15 +71,8 @@ function Timesheet() {
         setEntryProjectList(respProjectBody);
     };
 
-    let projectColor
-    {entryProjectList.map((entryProject) => (
-        projectColor = entryProject.color                      
-    ))}
-
     // i want to edit the entries database
     const [status, setStatus] = useState(false);
-    const [today, setToday] = useState(false);
-    const [thisWeek, setThisWeek] = useState(false);
 
     const handleToday = async () => {
         setToday(true)
@@ -103,8 +101,15 @@ function Timesheet() {
         setIsReady(true);
     }
 
-    const handleOpen = () => {
+    const editEntry = async (tid) => {
+        const res = await timelog.get(tid);
+        console.log(res)
+        setSingleEntry(res);
+    }
+
+    const handleOpen = (tid) => {
         setStatus(true);
+        // editEntry(tid)
         document.body.style = 'overflow: hidden';
     };
 
@@ -115,7 +120,7 @@ function Timesheet() {
 
     const footer = (
         <>
-            <button className={modalStyles.okBtn} onClick={handleClose}>
+            <button className={modalStyles.okBtn} >
                 Save
             </button>
             <button className={modalStyles.okBtn} onClick={handleClose}>
@@ -125,13 +130,11 @@ function Timesheet() {
     );
 
     const deleteEntry = async (tid) => {
-        const res = await timelog.delete(tid);
+        await timelog.delete(tid);
         setTimeout(handleToday, 100);
     };
 
-    const editEntry = async (tid) => {
-        const res = await timelog.get(tid);
-    };
+    ;
 
     useEffect(() => {
         getEntryProject();
@@ -207,26 +210,25 @@ function Timesheet() {
                                     value={project}
                                     onChange={(e) => setProject(e.target.value)}
                                 />
-                                <datalist id='projectDataList'>
-                                    {entryProjectList.map((entryProject) => (
-                                        <option value={entryProject.project} key={entryProject.key} />
-                                    ))}
-                                </datalist>
+                                    <datalist id='projectDataList'>
+                                        {entryProjectList.map((entryProject, index) => (
+                                            <option value={entryProject.project} key={index} />
+                                        ))}
+                                    </datalist>
                             </div>
                         </div>
 
                         <div className={timesheetStyles.all_buttons}>
                             <div className={timesheetStyles.timer}>
-                                <Timer />
                                 {/* play timer */}
-                                {/* <button type='button' className={timesheetStyles.play}>
+                                <button type='button' className={timesheetStyles.play}>
                                     play timer
-                                </button> */}
+                                </button>
 
-                                {/* restart timer */}
-                                {/* <button type='button' className={timesheetStyles.reset}>
+                                {/* reset timer */}
+                                <button type='button' className={timesheetStyles.reset}>
                                     reset timer
-                                </button> */}
+                                </button>
                             </div>
 
                             {/* Add new entry */}
@@ -245,12 +247,12 @@ function Timesheet() {
                                     <p>No entries in this date range...</p>
                                 ) : (
                                     <div className=''>
-                                        {entryList.map((item) => (
-                                            <div className={timesheetStyles.entry_list} key={item.key}>
+                                        {entryList.map((item, index) => (
+                                            <div className={timesheetStyles.entry_list} key={index}>
                                                 <p>{item.date}</p>
                                                 {/* start to end time, end time - start time, : button(modal) */}
                                                 <div className={timesheetStyles.project_notes}>
-                                                    <p className={timesheetStyles.newProject} style={{backgroundColor: projectColor}}>
+                                                    <p className={timesheetStyles.newProject} style={{backgroundColor: ''}}>
                                                         {item.project}
                                                     </p>
                                                     <p className={timesheetStyles.newWork}>
@@ -286,8 +288,9 @@ function Timesheet() {
                                                     <button
                                                         className={timesheetStyles.edit} 
                                                         onClick={() => {
-                                                            console.log(editEntry(item.key));
-                                                            handleOpen()
+                                                            // console.log(item.key)
+                                                            handleOpen(item.key)
+                                                            editEntry(item.key)
                                                         }}
                                                     >
                                                         Edit entry
@@ -296,7 +299,8 @@ function Timesheet() {
 
                                                 {status && (
                                                     <Example closeModal={handleClose} footer={footer}> 
-                                                        <div className={modalStyles.submit}>
+                                                    {/* {singleEntry.map((singleItem, index) => ( */}
+                                                        <div className={modalStyles.submit} key={index}>
                                                         <form
                                                             action=''
                                                             onSubmit={handleAddEntry}
@@ -307,7 +311,7 @@ function Timesheet() {
                                                                     <label className={timesheetStyles.label}>Date</label>
                                                                     <input
                                                                         type='date'
-                                                                        value={item.date}
+                                                                        value={singleEntry.date}
                                                                         onChange={(e) => setNewDate(e.target.value)}
                                                                     />
                                                                 </div>
@@ -320,7 +324,7 @@ function Timesheet() {
                                                                             type='time'
                                                                             name='time-start'
                                                                             id='time-start'
-                                                                            value={item.startTime}
+                                                                            value={singleEntry.startTime}
                                                                             onChange={(e) =>setNewStartTime(e.target.value)}
                                                                         />
                                                                     </div>
@@ -332,7 +336,7 @@ function Timesheet() {
                                                                             type='time'
                                                                             name='time-end'
                                                                             id='time-end'
-                                                                            value={item.endTime}
+                                                                            value={singleEntry.endTime}
                                                                             onChange={(e) =>setNewEndTime(e.target.value)}
                                                                         />
                                                                     </div>
@@ -346,7 +350,7 @@ function Timesheet() {
                                                                         name='work'
                                                                         id='work'
                                                                         placeholder='what are you working on?'
-                                                                        value={item.work}
+                                                                        value={singleEntry.work}
                                                                         onChange={(e) => setWork(e.target.value)}
                                                                     />
                                                                 </div>
@@ -359,17 +363,18 @@ function Timesheet() {
                                                                         id='projectData'
                                                                         list='projectDataList'
                                                                         placeholder='Select project'
-                                                                        value={item.project}
+                                                                        value={singleEntry.project}
                                                                         onChange={(e) => setProject(e.target.value)}
                                                                     />
                                                                     <datalist id='projectDataList'>
-                                                                        {entryProjectList.map((entryProject) => (
-                                                                            <option value={entryProject.project} key={entryProject.key} />
+                                                                        {entryProjectList.map((entryProject, index) => (
+                                                                            <option value={entryProject.project} key={index} />
                                                                         ))}
                                                                     </datalist>
                                                                 </div>
                                                             </form>
                                                         </div>
+                                                    {/* ))} */}
                                                     </Example>
                                                 )}
                                             </div>
