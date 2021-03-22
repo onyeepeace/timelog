@@ -117,6 +117,11 @@
     .report_button {
         display: block;
         margin-top: 3rem;
+        width: 27%;
+        padding: .5rem;
+        border: 1px solid #d6d3d3;
+        border-radius: 4px;
+        text-transform: capitalize;
     }
 
     .detailed_heading {
