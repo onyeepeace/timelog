@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ReactSvgPieChart from "react-svg-piechart"
 import moment from 'moment';
 import reportStyles from './Report.module.css';
@@ -11,24 +11,23 @@ const deta = Deta(process.env.REACT_APP_TIMELOG_PROJECT_KEY);
 const timelog = deta.Base('entries');
 
 const Report = () => {
+    // state to display the entries added
     const [isReady, setIsReady] = useState(false);
     const [entryList, setEntryList] = useState([{}]);
+
+    // state to sort the entries added
     const [today, setToday] = useState(false);
     const [thisWeek, setThisWeek] = useState(false);
+
+    // state to toggle the detailed report
     const [status, setStatus] = useState(false);
 
+    // fetches the data for the piechart
     const data = entryList.map(entryData => (
         {title: entryData.project, value: parseInt(entryData.duration), color: "#22594e"}
     ))
-
-    const getEntry = async () => {
-        let respBody = {};
-        const { value: items } = await timelog.fetch([]).next();
-        respBody = items;
-        setEntryList(respBody);
-        setIsReady(true);
-    };
-
+    
+    // filters entries by today
     const handleToday = async () => {
         setToday(true)
         let respBody = {}
@@ -39,13 +38,14 @@ const Report = () => {
         setIsReady(true);
     }
 
+    // calculates days for filter
     const calculateDate = (days) => {
         var someDate = new Date();
-        someDate.setDate(someDate.getDate() + days); //number  of days to add, e.x. 15 days
-        var dateFormated = someDate.toISOString().slice(0,10);
-        console.log(dateFormated);
+        someDate.setDate(someDate.getDate() + days);
+        someDate.toISOString().slice(0,10);
     }
 
+    // filters entries by this week
     const handleThisWeek = async () => {
         setThisWeek(true)
         let respBody = {}
@@ -56,15 +56,13 @@ const Report = () => {
         setIsReady(true);
     }
 
+    // function to toggle the detailed report
     const handleOpen = () => {
         const isOpen = !status
         setStatus(isOpen);
     };
 
-    useEffect(() => {
-        getEntry();
-    }, []);
-
+    // sums the total time spent on all projects
     const totalDurations = entryList.slice(1)
     .reduce((prev, cur) => {
         return prev.add(cur.duration);
@@ -112,6 +110,7 @@ const Report = () => {
                                     </div>
                                 </div>
                                 
+                                {/* detailed report */}
                                 <button className={reportStyles.report_button} onClick={handleOpen}>See detailed report</button>
                                 {status && (
                                 <div className={reportStyles.detailed_report} id="detailed">

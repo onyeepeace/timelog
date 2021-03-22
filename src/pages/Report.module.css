@@ -50,6 +50,10 @@
     background-color: #d6d3d3;
 }
 
+.report_button{
+    display: none;
+}
+
 .detailed_report {
     display: none;
 }

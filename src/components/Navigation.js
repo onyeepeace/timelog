@@ -48,12 +48,6 @@ const Header = () => {
                                     Projects
                                 </NavLink>
                             </li>
-
-                            <li>
-                                <NavLink to='/settings' className='nav-links'>
-                                    Settings
-                                </NavLink>
-                            </li>
                         </ul>
                     </div>
                 </nav>

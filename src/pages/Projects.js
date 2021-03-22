@@ -11,12 +11,16 @@ const deta = Deta(process.env.REACT_APP_TIMELOG_PROJECT_KEY);
 const projectlog = deta.Base('projects');
 
 const Projects = () => {
+    // state for form inputs
     const [newColor, setNewColor] = useState('');
     const [newProject, setNewProject] = useState('');
     const [newParent, setNewParent] = useState('');
 
+    // state to display projects added
     const [isReady, setIsReady] = useState(false);
     const [projectList, setProjectList] = useState([{}]);
+
+    // state to open the modal and edit a project
     const [status, setStatus] = useState(false);
     
     const handleAddProject = (e) => {
@@ -29,10 +33,17 @@ const Projects = () => {
                 project: newProject,
                 parent: newParent,
             };
+            // adds project to the database
             projectlog.put(values);
+
+            // clears the form fields
+            setNewColor('')
+            setNewProject('')
+            setNewParent('')
         }
     };
 
+    // function to get projects added to the database
     const getProject = async () => {
         let respBody = {};
         const { value: items } = await projectlog.fetch([]).next();
@@ -41,16 +52,19 @@ const Projects = () => {
         setIsReady(true);
     };
 
+    // function to open the modal
     const handleOpen = () => {
         setStatus(true);
         document.body.style = 'overflow: hidden';
     };
 
+    // function to close the modal
     const handleClose = () => {
         setStatus(false);
         document.body.style = 'overflow: auto';
     };
 
+    // footer for the modal
     const footer = (
         <>
             <button className={modalStyles.okBtn} onClick={handleClose}>
@@ -78,6 +92,7 @@ const Projects = () => {
     return (
         <main className={projectStyles.project_main}>
             <div className={projectStyles.container}>
+                {/* form to add entries */}
                 <form
                     action=''
                     onSubmit={handleAddProject}
@@ -136,6 +151,7 @@ const Projects = () => {
                     </button>
                 </form>
 
+                {/* displays the projects added */}
                 <div className={projectStyles.entries}>
                     {!isReady ? (
                         <p>No projects added yet...</p>
@@ -180,7 +196,8 @@ const Projects = () => {
                                             Edit project
                                         </button>
                                     </div>
-
+                                    
+                                    {/* modal to edit a project */}
                                     {status && (
                                         <Example closeModal={handleClose} footer={footer}> 
                                             <div className={modalStyles.submit}>
@@ -235,11 +252,6 @@ const Projects = () => {
                                                             ))}
                                                         </select>
                                                     </div>
-
-                                                    {/* Add new project */}
-                                                    <button type='submit' className={projectStyles.submit}>
-                                                        Add entry
-                                                    </button>
                                                 </form>
                                             </div>
                                         </Example>
