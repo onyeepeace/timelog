@@ -3,7 +3,7 @@ import modalStyles from './Modal.module.css';
 import { Close } from '@styled-icons/remix-fill/Close';
 
 export default function Modal(props) {
-    const { closeModal, children, footer } = props;
+    const { closeModal, children,} = props;
 
     const closeicon = () => (
         <Close className={modalStyles.closeIcon} onClick={closeModal} />
@@ -15,7 +15,7 @@ export default function Modal(props) {
             <div className={modalStyles.content}>
                 {closeicon()}
                 {children}
-                <div>{footer}</div>
+                {/* <div>{footer}</div> */}
             </div>
             </div>
         </>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import projectStyles from './Project.module.css';
 import ProjectModal from '../components/ProjectModal';
+import Modal from '../components/Modal';
+import modalStyles from '../components/Modal.module.css';
 
 const { Deta } = require('deta'); // import Deta
 
@@ -21,6 +23,13 @@ const Projects = () => {
 
     // state to open the modal and edit a project
     const [status, setStatus] = useState(false);
+
+    // state for the modal inputs
+    const [projectItem, setProjectItem] = useState({
+        color: '',
+        project: '',
+        parent: ''
+    });
     
     const handleAddProject = (e) => {
         e.preventDefault();
@@ -51,10 +60,36 @@ const Projects = () => {
         setIsReady(true);
     };
 
+    // function to delete a project
     const deleteProject = async (tid) => {
         await projectlog.delete(tid);
         setTimeout(getProject, 100);
     };
+
+    // modal
+    const getSelectedProject = async (tid) => {
+        const res = await projectlog.get(tid);
+        setProjectItem(res)
+    }
+
+    //function to open the modal
+    const handleOpen = (tid) => {
+        setStatus(true)
+        getSelectedProject(tid)
+    }
+    
+    // function to close the modal
+    const handleClose = () => {
+        document.body.style = 'overflow: auto';
+        setStatus(false)
+    };
+    
+    //send edited data to the database
+    const handleEdit = () => {
+        projectlog.put(projectItem);
+        alert('project edited');
+        setStatus(false)
+    }
 
     useEffect(() => {
         getProject();
@@ -160,7 +195,7 @@ const Projects = () => {
                                         <button
                                             className={projectStyles.edit}
                                             onClick={() => {
-                                                setStatus(true)
+                                                handleOpen(singleProject.key)
                                             }}
                                         >
                                             Edit project
@@ -169,7 +204,19 @@ const Projects = () => {
                                     
                                     {/* modal to edit a project */}
                                     {status && (
-                                        <ProjectModal tid={singleProject.key} status={() => setStatus(false)} />
+                                        <>
+                                            <Modal closeModal={handleClose}>
+                                                <ProjectModal modal={projectItem} modalState={setProjectItem} />
+                                                <div className={modalStyles.footer_btns}>
+                                                    <button className={modalStyles.okBtn} onClick={handleEdit}>
+                                                        Save
+                                                    </button>
+                                                    <button className={modalStyles.okBtn} onClick={handleClose}>
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </Modal>
+                                        </>
                                     )}
                                 </div>
                             ))}

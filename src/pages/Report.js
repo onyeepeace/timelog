@@ -26,7 +26,7 @@ const Report = () => {
     const data = entryList.map(entryData => (
         {title: entryData.project, value: parseInt(entryData.duration), color: entryData.color}
     ))
-    
+
     // sorts entries by today
     const handleToday = async () => {
         setToday(true)

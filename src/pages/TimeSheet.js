@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
 import timesheetStyles from './TimeSheet.module.css';
 import TimeSheetModal from '../components/TimeSheetModal';
+import Modal from '../components/Modal';
+import modalStyles from '../components/Modal.module.css';
 
 const { Deta } = require('deta'); // import Deta
 
@@ -32,6 +34,15 @@ function Timesheet() {
 
     //show modal
     const [status, setStatus] = useState(false);
+
+    //modal state
+    const [entryItem, setEntryItem] = useState({
+        date: '',
+        startTime: '',
+        endTime: '',
+        project: '',
+        work: ''
+    });
 
     const handleAddEntry = (e) => {
         e.preventDefault();
@@ -110,10 +121,36 @@ function Timesheet() {
         setIsReady(false);
     }
 
+    // function to delete an entry
     const deleteEntry = async (tid) => {
         await timelog.delete(tid);
         setTimeout(handleToday, 100);
     };
+
+    //modal
+    const getSelectedEntry = async (tid) => {
+        const res = await timelog.get(tid);
+        setEntryItem(res)
+    }
+
+    //function to open the modal
+    const handleOpen = (tid) => {
+        setStatus(true)
+        getSelectedEntry(tid)
+    }
+    
+    // function to close the modal
+    const handleClose = () => {
+        document.body.style = 'overflow: auto';
+        setStatus(false)
+    };
+    
+    //send edited data to the database
+    const handleEdit = () => {
+        timelog.put(entryItem);
+        alert('entry edited');
+        setStatus(false)
+    }
 
     useEffect(() => {
         getEntryProject();
@@ -197,7 +234,8 @@ function Timesheet() {
                                     placeholder='Select project'
                                     value={project}
                                     onChange={(e) => setProject(e.target.value)}
-                                >
+                                    >
+                                    <option></option>
                                     {entryProjectList.map((entryProject, index) => (
                                         <option key={index}>
                                             {entryProject.project}
@@ -278,7 +316,7 @@ function Timesheet() {
                                                     <button
                                                         className={timesheetStyles.edit} 
                                                         onClick={() => {
-                                                            setStatus(true)
+                                                            handleOpen(item.key)
                                                         }}
                                                     >
                                                         Edit entry
@@ -287,7 +325,19 @@ function Timesheet() {
 
                                                 {/* modal to edit entries */}
                                                 {status && (
-                                                    <TimeSheetModal tid={item.key} status={() => setStatus(false)} />
+                                                    <>
+                                                        <Modal closeModal={handleClose}>
+                                                            <TimeSheetModal modal={entryItem} modalState={setEntryItem} />
+                                                            <div className={modalStyles.footer_btns}>
+                                                                <button className={modalStyles.okBtn} onClick={handleEdit}>
+                                                                    Save
+                                                                </button>
+                                                                <button className={modalStyles.okBtn} onClick={handleClose}>
+                                                                    Cancel
+                                                                </button>
+                                                            </div>
+                                                        </Modal>
+                                                    </>
                                                 )}
                                             </div>
                                         ))}
